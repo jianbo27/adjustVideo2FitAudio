@@ -11,7 +11,7 @@ from tools import tools
 
 # we assume the audio is in synchronization with video
 
-videoFile = r'tt4.mp4'
+videoFile = r'配音-原.mp4'
 theotherwavFile = r'1.wav'
 # here we want to use silentSpeed to help us control the length of video
 # it means the speed ration is calculated by 
@@ -29,7 +29,7 @@ len_audio = t.calcWavTime(theotherwavFile)
 len_video = t.calcVideoTime(videoFile)
 len_sv = t.calSlientVideoPartTime(videoFile)
 
-silentSpeed = (len_audio - len_video + len_sv) / len_sv
+silentSpeed =  math.floor( len_sv / (len_audio - len_video + len_sv) )
 
 cap = cv2.VideoCapture(videoFile)
 
@@ -38,7 +38,7 @@ height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 fps = round(cap.get(cv2.CAP_PROP_FPS))
 
-extractAudio = "ffmpeg -i {} -ab 160k -ac 2 -ar 44100 -vn output.wav".format(videoFile)
+extractAudio = "ffmpeg -i {} -ab 160k -ac 2 -ar 44100 -vn tmp.wav".format(videoFile)
 subprocess.call(extractAudio, shell=True)
 
 out = cv2.VideoWriter("spedup.mp4", fourcc, fps, (width, height))
@@ -150,7 +150,7 @@ mergeCommand = "ffmpeg -i spedup.mp4 -i spedupAudio.wav -c:v copy -c:a aac {}".f
 
 error = subprocess.call(mergeCommand, shell=True)
 if error == 0:
-    removeCommand = "rm output.wav spedup.mp4 spedupAudio.wav"
+    removeCommand = "rm spedup.mp4 spedupAudio.wav"
     rmError = subprocess.call(removeCommand, shell=True)
     # rm is not available on Windows, so rm would return != 0
     if rmError != 0:
