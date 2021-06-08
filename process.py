@@ -29,7 +29,8 @@ len_audio = t.calcWavTime(theotherwavFile)
 len_video = t.calcVideoTime(videoFile)
 len_sv = t.calSlientVideoPartTime(videoFile)
 
-silentSpeed =  math.floor( len_sv / (len_audio - len_video + len_sv) )
+silentSpeed =  round( len_sv / (len_audio - len_video + len_sv),2 )
+print(silentSpeed)
 
 cap = cv2.VideoCapture(videoFile)
 
